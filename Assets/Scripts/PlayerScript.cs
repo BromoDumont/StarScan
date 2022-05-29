@@ -35,14 +35,16 @@ public class PlayerScript : MonoBehaviour
     #region Variaveis Privadas
         private Rigidbody2D plBody; //Componente que aplica física ao player.
         private LineRenderer hookLine; //Componente que fara a linha entre os ganchos e o player.
+        private TrailRenderer trailComponent; //Cmponente que faz a trilha do player.
         private GameObject hookObj; //Objeto do gancho.
-        private float cameraXAxis; //Valor do eixo X da camêra
+        private float cameraXAxis; //Valor do eixo X da camêra.
     #endregion
 
     void Awake()
     {
         plBody = GetComponent<Rigidbody2D>();
         hookLine = GetComponent<LineRenderer>();
+        trailComponent = GetComponent<TrailRenderer>();
     }
 
     void FixedUpdate()
@@ -78,54 +80,10 @@ public class PlayerScript : MonoBehaviour
     void GetHook()
     {
         NewHook();
-
-        if (plAngularVel > 0 & plAngularVel < 301)
-        {
-            plAngularVel += roundPoints/4;
-        }
-
-        if (plAngularVel < 0 & plAngularVel > -301)
-        {
-            plAngularVel -= roundPoints/4;
-        }
-
-        if (plAngularVel > 0)
-        {
-            if (plAngularVel < 300)
-            {
-                plAngularVel += roundPoints/4;
-            }
-            else
-            {
-                if (plAngularVel < 500)
-                {
-                    plAngularVel += roundPoints/8;
-                }
-                else
-                {
-                    plAngularVel += roundPoints/16;
-                }
-            }
-        }
-        else
-        {
-            if (plAngularVel > -300)
-            {
-                plAngularVel -= roundPoints/4;
-            }
-            else
-            {
-                if (plAngularVel > -500)
-                {
-                    plAngularVel -= roundPoints/8;
-                }
-                else
-                {
-                    plAngularVel -= roundPoints/16;
-                }
-            }
-        }
         AddPoint();
+
+        plAngularVel = Mathf.Lerp(150,500,Mathf.InverseLerp(0,100,roundPoints));
+        trailComponent.time = Mathf.Lerp(0.11f, 2.35f,Mathf.InverseLerp(500,150,plAngularVel));
 
         if (plBody.velocity.y > 0 & plAngularVel > 0 || plBody.velocity.y < 0 & plAngularVel < 0)
         {

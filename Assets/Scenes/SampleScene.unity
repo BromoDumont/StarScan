@@ -1082,7 +1082,7 @@ MonoBehaviour:
   cameraObj: {fileID: 519420028}
   plAngularVel: 150
   pointsTxtBox: {fileID: 727478501}
-  roundPoints: 0
+  roundPoints: -1
   plOnHook: 0
 --- !u!212 &1681762506
 SpriteRenderer:
@@ -1393,7 +1393,7 @@ TrailRenderer:
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0
-  m_MinVertexDistance: 0.1
+  m_MinVertexDistance: 0
   m_Autodestruct: 0
   m_Emitting: 1
 --- !u!1001 &7485663617068645502
