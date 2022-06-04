@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
 using System.IO;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,11 +14,20 @@ public class GameManager : MonoBehaviour
     [Tooltip ("Objeto que armazena os elementos da UI quando o jogo está pausado")] [SerializeField]
     private GameObject pauseObj;
 
+    [Tooltip ("Objeto que armazena a tela de morte")] [SerializeField]
+    private GameObject deathObj;
+
     [Tooltip ("Componente da imagem do botão de pause.")] [SerializeField]
     private Image pauseBtnImageComp;
 
     [Tooltip ("Armazena os sprites do botão de pause.")] [SerializeField]
     private Sprite[] pauseBtnSprite;
+
+    [Tooltip ("Caixa de texto que mostra o recorde de pontos")] [SerializeField]
+    private TextMeshProUGUI deathMaxPointsTxt;
+
+    [Tooltip ("Caixa de texto que mostra a quantidade de pontos da ultima rodada")] [SerializeField]
+    private TextMeshProUGUI roundPointsTxt;
 
     public int maxPoints;
 
@@ -49,18 +59,17 @@ public class GameManager : MonoBehaviour
 
     public void DeathScreen()
     {
-        //plObj.SetActive(false);
-        //deathScreenObj.SetActive(true);
-        //deathMaxPoints.text = maxPoints.ToString();
-        //deathRoundPointss.text = _PlayerScript.roundPoints.ToString();
+        deathObj.SetActive(true);
+        _PlayerScript.gameObject.SetActive(false);
+
+        deathMaxPointsTxt.text = maxPoints.ToString();
+        roundPointsTxt.text = _PlayerScript.roundPoints.ToString();
     }
 
     public void GameRestart()
     {
         SaveData();
         SceneManager.LoadScene(0);
-        _PlayerScript.roundPoints = 0;
-        //deathScreenObj.SetActive(false);
     }
 
     public void SaveData()

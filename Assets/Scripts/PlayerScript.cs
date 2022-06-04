@@ -17,19 +17,28 @@ public class PlayerScript : MonoBehaviour
     [Tooltip ("Objeto da câmera.")] [SerializeField]
     private GameObject cameraObj;
 
-    [Tooltip ("Define a velocidade angular do player.")] [SerializeField]
+    [Tooltip ("velocidade angular do player.")] [SerializeField]
     private float plAngularVel;
 
-    [Tooltip ("Caixa de texto que mostra a quantidade de pontos do player.")] [SerializeField]
+    [Tooltip ("Caixa de texto com a quantidade de pontos do player.")] [SerializeField]
     private TextMeshProUGUI pointsTxtBox;
 
     [Header ("Debug Data----------------------------")]
     [Space]
 
-    [Tooltip ("Armazena a quantidade de pontos da rodada atual.")]
+    [Tooltip ("Quantidade de pontos da rodada atual.")]
     public int roundPoints;
 
-    [Tooltip ("Armazena a informação se o player está ou não conectado em um gancho.")]
+    [Tooltip ("Quantidade de pontos do combo.")]
+    public int comboPoints;
+
+    [Tooltip ("Quantidade de protetores de combo.")]
+    public int comboProtector;
+
+    [Tooltip ("Tamanho padrão da fonte do texto com a pontuação,")] [SerializeField]
+    private float defaultFontSize;
+
+    [Tooltip ("Informa se o player está ou não conectado em um gancho.")]
     public bool plOnHook;
 
     #region Variaveis Privadas
@@ -45,13 +54,18 @@ public class PlayerScript : MonoBehaviour
         plBody = GetComponent<Rigidbody2D>();
         hookLine = GetComponent<LineRenderer>();
         trailComponent = GetComponent<TrailRenderer>();
+        defaultFontSize = pointsTxtBox.fontSize;
     }
 
     void FixedUpdate()
     {
-        pointsTxtBox.text = roundPoints.ToString();
         cameraObj.transform.position = new Vector3(cameraXAxis + 4, 0, -10);
         hookLine.SetPosition(0, plBody.position);
+
+        if (pointsTxtBox.fontSize > defaultFontSize)
+        {
+            pointsTxtBox.fontSize -= 50 * Time.deltaTime;
+        }
 
         if (plOnHook == true)
         {
@@ -70,6 +84,8 @@ public class PlayerScript : MonoBehaviour
     public void AddPoint()
     {
         roundPoints++;
+        pointsTxtBox.text = roundPoints.ToString();
+        pointsTxtBox.fontSize = defaultFontSize + (defaultFontSize/4);
 
         if (_GameManager.maxPoints < roundPoints)
         {
@@ -81,6 +97,14 @@ public class PlayerScript : MonoBehaviour
     {
         NewHook();
         AddPoint();
+
+        if (comboProtector >= 0)
+        {
+            comboPoints++;
+        }
+
+        comboProtector = 1;
+        hookCacheObj.transform.position = plBody.position;
 
         plAngularVel = Mathf.Lerp(150,500,Mathf.InverseLerp(0,100,roundPoints));
         trailComponent.time = Mathf.Lerp(0.11f, 2.35f,Mathf.InverseLerp(500,150,plAngularVel));
@@ -121,10 +145,19 @@ public class PlayerScript : MonoBehaviour
             hookObj = collider.gameObject;
             GetHook();
         }
+
+        if (collider.gameObject.CompareTag("HookCache"))
+        {
+            comboProtector--;
+            if (comboProtector < 0)
+            {
+                comboPoints = 0;
+            }
+        }
     }
 
     void OnBecameInvisible()
     {
-        _GameManager.GameRestart();
+         _GameManager.DeathScreen();
     }
 }
