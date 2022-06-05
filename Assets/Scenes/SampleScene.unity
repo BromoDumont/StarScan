@@ -2038,7 +2038,8 @@ MonoBehaviour:
   cameraObj: {fileID: 519420028}
   plAngularVel: 150
   pointsTxtBox: {fileID: 727478501}
-  roundPoints: -1
+  comboTxtObj: {fileID: 5956421492051778835, guid: 395a97368f029214d94b8a0fa7b0a19c, type: 3}
+  roundPoints: 0
   comboPoints: 0
   comboProtector: 0
   defaultFontSize: 0

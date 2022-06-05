@@ -23,6 +23,9 @@ public class PlayerScript : MonoBehaviour
     [Tooltip ("Caixa de texto com a quantidade de pontos do player.")] [SerializeField]
     private TextMeshProUGUI pointsTxtBox;
 
+    [Tooltip ("Objeto da caixa de texto dos combos.")] [SerializeField]
+    private Transform comboTxtObj;
+
     [Header ("Debug Data----------------------------")]
     [Space]
 
@@ -101,6 +104,10 @@ public class PlayerScript : MonoBehaviour
         if (comboProtector >= 0)
         {
             comboPoints++;
+            if (comboPoints > 2)
+            {
+                NewComboText();
+            }
         }
 
         comboProtector = 1;
@@ -136,6 +143,11 @@ public class PlayerScript : MonoBehaviour
     void NewHook()
     {
         Instantiate(hookPrefab, new Vector2(hookObj.transform.position.x + 16.5f, Random.Range(-17, 15)), Quaternion.identity);
+    }
+
+    void NewComboText()
+    {
+        Instantiate(comboTxtObj, plBody.position, Quaternion.identity);
     }
 
     void OnTriggerEnter2D(Collider2D collider)
