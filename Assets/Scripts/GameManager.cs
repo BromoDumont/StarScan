@@ -11,23 +11,23 @@ public class GameManager : MonoBehaviour
     [Tooltip ("Conecta o script 'PlayerScript' com o script 'GameManager'.")] [SerializeField] 
     private PlayerScript _PlayerScript;
 
+    [Tooltip ("Objeto que armazena os elementos padrões da UI quando o jogo não está pausado")] [SerializeField]
+    private GameObject defaultUIObj;
+
     [Tooltip ("Objeto que armazena os elementos da UI quando o jogo está pausado")] [SerializeField]
-    private GameObject pauseObj;
+    private GameObject pauseUIObj;
 
     [Tooltip ("Objeto que armazena a tela de morte")] [SerializeField]
-    private GameObject deathObj;
-
-    [Tooltip ("Componente da imagem do botão de pause.")] [SerializeField]
-    private Image pauseBtnImageComp;
-
-    [Tooltip ("Armazena os sprites do botão de pause.")] [SerializeField]
-    private Sprite[] pauseBtnSprite;
+    private GameObject deathUIObj;
 
     [Tooltip ("Caixa de texto que mostra o recorde de pontos")] [SerializeField]
     private TextMeshProUGUI deathMaxPointsTxt;
 
     [Tooltip ("Caixa de texto que mostra a quantidade de pontos da ultima rodada")] [SerializeField]
     private TextMeshProUGUI roundPointsTxt;
+
+    [Tooltip ("Monitor do timeScale")] [SerializeField]
+    private float timeScaleMonitor;
 
     public int maxPoints;
 
@@ -38,28 +38,29 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        //inGamePointsTxt.text = _PlayerScript.roundPoints.ToString();
+        timeScaleMonitor = Time.timeScale;
     }
 
     public void Pause()
     {
         if (Time.timeScale > 0)
         {
-            pauseBtnImageComp.sprite = pauseBtnSprite[0];
-            pauseObj.SetActive(true);
+            pauseUIObj.SetActive(true);
+            defaultUIObj.SetActive(false);
             Time.timeScale = 0;
         }
         else
         {
-            pauseBtnImageComp.sprite = pauseBtnSprite[1];
-            pauseObj.SetActive(false);
+            pauseUIObj.SetActive(false);
+            defaultUIObj.SetActive(true);
             Time.timeScale = 1;
         }
     }
 
     public void DeathScreen()
     {
-        deathObj.SetActive(true);
+        deathUIObj.SetActive(true);
+        defaultUIObj.SetActive(false);
         _PlayerScript.gameObject.SetActive(false);
 
         deathMaxPointsTxt.text = maxPoints.ToString();
@@ -69,7 +70,18 @@ public class GameManager : MonoBehaviour
     public void GameRestart()
     {
         SaveData();
+        SceneManager.LoadScene(1);
+    }
+
+    public void HomeScreen()
+    {
+        Time.timeScale = 1;
         SceneManager.LoadScene(0);
+    }
+
+    public void InfinityMode()
+    {
+        SceneManager.LoadScene(1);
     }
 
     public void SaveData()
