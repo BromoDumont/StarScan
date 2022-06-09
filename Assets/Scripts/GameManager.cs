@@ -20,11 +20,18 @@ public class GameManager : MonoBehaviour
     [Tooltip ("Objeto que armazena a tela de morte")] [SerializeField]
     private GameObject deathUIObj;
 
+    [Tooltip ("Caixa de texto que mostra a quantidade de pontos da rodada atual no menu de pausa")] [SerializeField]
+    private TextMeshProUGUI pausePointsTxtBox;
+
+    [Tooltip ("Caixa de texto que mostra o rescorde de pontos no menu de pausa")] [SerializeField]
+    private TextMeshProUGUI pauseMaxPointsTxtBox;
+
+    [Tooltip ("Caixa de texto que mostra a quantidade de pontos da ultima rodada")] [SerializeField]
+    private TextMeshProUGUI deathRoundPointsTxt;
+    
     [Tooltip ("Caixa de texto que mostra o recorde de pontos")] [SerializeField]
     private TextMeshProUGUI deathMaxPointsTxt;
 
-    [Tooltip ("Caixa de texto que mostra a quantidade de pontos da ultima rodada")] [SerializeField]
-    private TextMeshProUGUI roundPointsTxt;
 
     [Tooltip ("Monitor do timeScale")] [SerializeField]
     private float timeScaleMonitor;
@@ -33,6 +40,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        Time.timeScale = 1;
         LoadData();
     }
 
@@ -45,9 +53,11 @@ public class GameManager : MonoBehaviour
     {
         if (Time.timeScale > 0)
         {
+            Time.timeScale = 0;
+            pausePointsTxtBox.text = _PlayerScript.roundPoints.ToString();
+            pauseMaxPointsTxtBox.text = maxPoints.ToString();
             pauseUIObj.SetActive(true);
             defaultUIObj.SetActive(false);
-            Time.timeScale = 0;
         }
         else
         {
@@ -64,7 +74,7 @@ public class GameManager : MonoBehaviour
         _PlayerScript.gameObject.SetActive(false);
 
         deathMaxPointsTxt.text = maxPoints.ToString();
-        roundPointsTxt.text = _PlayerScript.roundPoints.ToString();
+        deathRoundPointsTxt.text = _PlayerScript.roundPoints.ToString();
     }
 
     public void GameRestart()
@@ -75,7 +85,6 @@ public class GameManager : MonoBehaviour
 
     public void HomeScreen()
     {
-        Time.timeScale = 1;
         SceneManager.LoadScene(0);
     }
 
