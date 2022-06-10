@@ -32,22 +32,14 @@ public class GameManager : MonoBehaviour
     [Tooltip ("Caixa de texto que mostra o recorde de pontos")] [SerializeField]
     private TextMeshProUGUI deathMaxPointsTxt;
 
-
-    [Tooltip ("Monitor do timeScale")] [SerializeField]
-    private float timeScaleMonitor;
-
+    [Tooltip ("Variavel que armazena a quantidade máxima de pontos já obtidos por um usuario.")]
     public int maxPoints;
 
     void Awake()
     {
         Time.timeScale = 1;
         LoadData();
-    }
-
-    void Update()
-    {
-        timeScaleMonitor = Time.timeScale;
-    }
+    }   
 
     public void Pause()
     {
@@ -71,28 +63,23 @@ public class GameManager : MonoBehaviour
     {
         deathUIObj.SetActive(true);
         defaultUIObj.SetActive(false);
-        //_PlayerScript.gameObject.SetActive(false);
-        _PlayerScript.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-        _PlayerScript.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0;
 
         deathMaxPointsTxt.text = maxPoints.ToString();
         deathRoundPointsTxt.text = _PlayerScript.roundPoints.ToString();
+
+        _PlayerScript.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        _PlayerScript.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0;
     }
 
     public void GameRestart()
     {
         SaveData();
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void HomeScreen()
+    public void CallNewScene(int sceneValue)
     {
-        SceneManager.LoadScene(0);
-    }
-
-    public void InfinityMode()
-    {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(sceneValue);
     }
 
     public void SaveData()

@@ -8,9 +8,6 @@ public class ComboTextScript : MonoBehaviour
     [Tooltip ("Objeto do player")] [SerializeField]
     private GameObject playerObj;
 
-    [Tooltip ("Conecta o script 'PlayerScript' com o script 'GameManager'.")] [SerializeField] 
-    private PlayerScript _PlayerScript;
-
     [Tooltip ("Caixa de texto com o valor do combo.")] [SerializeField]
     private TextMeshPro comboTxt;
 
@@ -20,12 +17,11 @@ public class ComboTextScript : MonoBehaviour
     void Start()
     {
         playerObj = GameObject.Find("Player");
-        _PlayerScript = playerObj.GetComponent<PlayerScript>();
-        comboTxt.text = _PlayerScript.comboPoints.ToString();
+        comboTxt.text = playerObj.GetComponent<PlayerScript>().comboPoints.ToString();
     }
 
-    void Update()
-    {   
+    void FixedUpdate()
+    {
         if (playerObj.GetComponent<Rigidbody2D>().angularVelocity > 0)
         {
             verticalVariable += Time.deltaTime / 8;
@@ -39,10 +35,7 @@ public class ComboTextScript : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-    }
 
-    void FixedUpdate()
-    {
         this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y + verticalVariable);
     }
 }
