@@ -71,7 +71,9 @@ public class GameManager : MonoBehaviour
     {
         deathUIObj.SetActive(true);
         defaultUIObj.SetActive(false);
-        _PlayerScript.gameObject.SetActive(false);
+        //_PlayerScript.gameObject.SetActive(false);
+        _PlayerScript.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        _PlayerScript.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0;
 
         deathMaxPointsTxt.text = maxPoints.ToString();
         deathRoundPointsTxt.text = _PlayerScript.roundPoints.ToString();
