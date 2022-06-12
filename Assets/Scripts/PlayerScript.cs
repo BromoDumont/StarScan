@@ -23,6 +23,9 @@ public class PlayerScript : MonoBehaviour
     [Tooltip ("Caixa de texto com a quantidade de pontos do player.")] [SerializeField]
     private TextMeshProUGUI pointsTxtBox;
 
+    [Tooltip ("Caixa de texto com a quantidade maxima de pontos já obtidas em uma rodada.")] [SerializeField]
+    private TextMeshProUGUI maxPointsTxtBox;
+
     [Tooltip ("Objeto da caixa de texto dos combos.")] [SerializeField]
     private Transform comboTxtObj;
 
@@ -58,6 +61,7 @@ public class PlayerScript : MonoBehaviour
         hookLine = GetComponent<LineRenderer>();
         trailComponent = GetComponent<TrailRenderer>();
         defaultFontSize = pointsTxtBox.fontSize;
+        maxPointsTxtBox.text = _GameManager.maxPoints.ToString();
     }
 
     void FixedUpdate()
