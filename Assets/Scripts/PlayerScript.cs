@@ -8,8 +8,8 @@ public class PlayerScript : MonoBehaviour
     [Tooltip ("Conecta o script 'GameManager' com o script 'PlayerScript'.")] [SerializeField] 
     private GameManager _GameManager;
 
-    [Tooltip ("Objeto que fica no local onde o player conectou no gancho.")] [SerializeField]
-    private GameObject hookCacheObj;
+    [Tooltip ("Objeto que fica no local onde o player conectou no gancho.")]
+    public GameObject hookCacheObj;
 
     [Tooltip ("Prefab do gancho.")] [SerializeField]
     private GameObject hookPrefab;

@@ -35,10 +35,30 @@ public class GameManager : MonoBehaviour
     [Tooltip ("Variavel que armazena a quantidade máxima de pontos já obtidos por um usuario.")]
     public int maxPoints;
 
+    [Tooltip ("Pontos da ultima rodada.")]
+    public int lastRoundPoints;
+
+    [Tooltip ("Informa se essa é a continuação de uma rodadaa anterior ou não")]
+    public bool isContinuation;
+
+    [Tooltip ("Define se o player pode ou não prescionar o botão continue depois de morrer.")]
+    public Button deathContinueBtn;
+
     void Awake()
     {
         Time.timeScale = 1;
         LoadData();
+
+        if (isContinuation == true)
+        {
+            _PlayerScript.roundPoints = lastRoundPoints - 1;
+            isContinuation = false;
+            deathContinueBtn.interactable = false;
+        }
+        else
+        {
+            deathContinueBtn.interactable = true;
+        }
     }   
 
     public void Pause()
@@ -71,8 +91,10 @@ public class GameManager : MonoBehaviour
         _PlayerScript.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0;
     }
 
-    public void GameRestart()
+    public void GameRestart(bool isContinuation)
     {
+        lastRoundPoints = _PlayerScript.roundPoints;
+        this.isContinuation = isContinuation;
         SaveData();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
@@ -93,6 +115,8 @@ public class GameManager : MonoBehaviour
         {
             PointsData data = SaveSystem.LoadPointsData();
             maxPoints = data._maxPoint;
+            lastRoundPoints = data._lastRoundPoints;
+            isContinuation = data._isContinuation;
         }
     }
 }
