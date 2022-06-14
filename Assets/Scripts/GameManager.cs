@@ -8,41 +8,59 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    [Tooltip ("Conecta o script 'PlayerScript' com o script 'GameManager'.")] [SerializeField] 
+    [Tooltip ("Player Script.")] [SerializeField] 
     private PlayerScript _PlayerScript;
+    [Tooltip ("Continue button.")]
+    public Button deathContinueBtn;
+    [Tooltip ("Define if this round is a continuation of the previous one")]
+    public bool isContinuation;
+    [Tooltip ("Combo text prefab.")] [SerializeField]
+    public Transform comboTxtPrefab;
 
-    [Tooltip ("Objeto que armazena os elementos padrões da UI quando o jogo não está pausado")] [SerializeField]
+    [Header ("--------------------------------------")]
+    [Space]
+    [Tooltip ("Default hud object.")] [SerializeField]
     private GameObject defaultUIObj;
-
-    [Tooltip ("Objeto que armazena os elementos da UI quando o jogo está pausado")] [SerializeField]
+    [Tooltip ("Pause hud object.")] [SerializeField]
     private GameObject pauseUIObj;
-
-    [Tooltip ("Objeto que armazena a tela de morte")] [SerializeField]
+    [Tooltip ("Death hud object.")] [SerializeField]
     private GameObject deathUIObj;
 
-    [Tooltip ("Caixa de texto que mostra a quantidade de pontos da rodada atual no menu de pausa")] [SerializeField]
-    private TextMeshProUGUI pausePointsTxtBox;
+    [Header ("--------------------------------------")]
+    [Space]
+    [Tooltip ("Max scans text value in default hud.")] [SerializeField]
+    public TextMeshProUGUI defaultMaxScansTxtBox;
+    [Tooltip ("Scans text value in default hud.")] [SerializeField]
+    public TextMeshProUGUI defaultCurrentScansTxtBox;
+    [Tooltip ("Max scans combo value in default hud")]
+    public TextMeshProUGUI defaultMaxComboTxtBox;
 
-    [Tooltip ("Caixa de texto que mostra o rescorde de pontos no menu de pausa")] [SerializeField]
-    private TextMeshProUGUI pauseMaxPointsTxtBox;
+    [Header ("--------------------------------------")]
+    [Space]
+    [Tooltip ("Scans value in pause hud")] [SerializeField]
+    private TextMeshProUGUI pauseScansTxtBox;
+    [Tooltip ("Max scan value in pause hud")] [SerializeField]
+    private TextMeshProUGUI pauseMaxScansTxtBox;
+    [Tooltip ("Max scans combo value in pause hud")]
+    public TextMeshProUGUI pauseMaxComboTxtBox;
 
-    [Tooltip ("Caixa de texto que mostra a quantidade de pontos da ultima rodada")] [SerializeField]
-    private TextMeshProUGUI deathRoundPointsTxt;
-    
-    [Tooltip ("Caixa de texto que mostra o recorde de pontos")] [SerializeField]
-    private TextMeshProUGUI deathMaxPointsTxt;
+    [Header ("--------------------------------------")]
+    [Space]
+    [Tooltip ("Scans value in death hud")] [SerializeField]
+    private TextMeshProUGUI deathRoundScansTxt;
+    [Tooltip ("Max scan value in death hud")] [SerializeField]
+    private TextMeshProUGUI deathMaxScansTxt;
+    [Tooltip ("Max runs scans combo value in death hud")]
+    public TextMeshProUGUI deathRunMaxComboTxtBox;
 
-    [Tooltip ("Variavel que armazena a quantidade máxima de pontos já obtidos por um usuario.")]
-    public int maxPoints;
-
-    [Tooltip ("Pontos da ultima rodada.")]
-    public int lastRoundPoints;
-
-    [Tooltip ("Informa se essa é a continuação de uma rodadaa anterior ou não")]
-    public bool isContinuation;
-
-    [Tooltip ("Define se o player pode ou não prescionar o botão continue depois de morrer.")]
-    public Button deathContinueBtn;
+    [Header ("--------------------------------------")]
+    [Space]
+    [Tooltip ("Max scans.")]
+    public int maxScans;
+    [Tooltip ("Max scan combo")]
+    public int maxCombo;
+    [Tooltip ("Last round scans.")]
+    public int lastRoundScans;
 
     void Awake()
     {
@@ -51,7 +69,7 @@ public class GameManager : MonoBehaviour
 
         if (isContinuation == true)
         {
-            _PlayerScript.roundPoints = lastRoundPoints - 1;
+            _PlayerScript.roundPoints = lastRoundScans - 1;
             isContinuation = false;
             deathContinueBtn.interactable = false;
         }
@@ -59,6 +77,8 @@ public class GameManager : MonoBehaviour
         {
             deathContinueBtn.interactable = true;
         }
+
+        defaultMaxScansTxtBox.text = maxScans.ToString();
     }   
 
     public void Pause()
@@ -66,8 +86,8 @@ public class GameManager : MonoBehaviour
         if (Time.timeScale > 0)
         {
             Time.timeScale = 0;
-            pausePointsTxtBox.text = _PlayerScript.roundPoints.ToString();
-            pauseMaxPointsTxtBox.text = maxPoints.ToString();
+            pauseScansTxtBox.text = _PlayerScript.roundPoints.ToString();
+            pauseMaxScansTxtBox.text = maxScans.ToString();
             pauseUIObj.SetActive(true);
             defaultUIObj.SetActive(false);
         }
@@ -84,8 +104,8 @@ public class GameManager : MonoBehaviour
         deathUIObj.SetActive(true);
         defaultUIObj.SetActive(false);
 
-        deathMaxPointsTxt.text = maxPoints.ToString();
-        deathRoundPointsTxt.text = _PlayerScript.roundPoints.ToString();
+        deathMaxScansTxt.text = maxScans.ToString();
+        deathRoundScansTxt.text = _PlayerScript.roundPoints.ToString();
 
         _PlayerScript.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
         _PlayerScript.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0;
@@ -93,7 +113,7 @@ public class GameManager : MonoBehaviour
 
     public void GameRestart(bool isContinuation)
     {
-        lastRoundPoints = _PlayerScript.roundPoints;
+        lastRoundScans = _PlayerScript.roundPoints;
         this.isContinuation = isContinuation;
         SaveData();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -114,8 +134,8 @@ public class GameManager : MonoBehaviour
         if (File.Exists(Application.persistentDataPath + "/StarScan.wts"))
         {
             PointsData data = SaveSystem.LoadPointsData();
-            maxPoints = data._maxPoint;
-            lastRoundPoints = data._lastRoundPoints;
+            maxScans = data._maxScans;
+            lastRoundScans = data._lastRoundScans;
             isContinuation = data._isContinuation;
         }
     }

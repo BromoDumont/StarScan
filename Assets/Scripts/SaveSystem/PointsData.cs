@@ -5,14 +5,14 @@ using UnityEngine;
 [System.Serializable]
 public class PointsData
 {
-    public int _maxPoint;
-    public int _lastRoundPoints;
+    public int _maxScans;
+    public int _lastRoundScans;
     public bool _isContinuation;
 
     public PointsData(GameManager _GameManager)
     {
-        _maxPoint = _GameManager.maxPoints;
-        _lastRoundPoints = _GameManager.lastRoundPoints;
+        _maxScans = _GameManager.maxScans;
+        _lastRoundScans = _GameManager.lastRoundScans;
         _isContinuation = _GameManager.isContinuation;
     }
 }

@@ -5,54 +5,39 @@ using TMPro;
 
 public class PlayerScript : MonoBehaviour
 {
-    [Tooltip ("Conecta o script 'GameManager' com o script 'PlayerScript'.")] [SerializeField] 
+    [Tooltip ("GameManager script.")] [SerializeField] 
     private GameManager _GameManager;
-
-    [Tooltip ("Objeto que fica no local onde o player conectou no gancho.")]
-    public GameObject hookCacheObj;
-
-    [Tooltip ("Prefab do gancho.")] [SerializeField]
-    private GameObject hookPrefab;
-
-    [Tooltip ("Objeto da câmera.")] [SerializeField]
+    [Tooltip ("Camera object.")] [SerializeField]
     private GameObject cameraObj;
 
-    [Tooltip ("velocidade angular do player.")] [SerializeField]
+    [Header ("--------------------------------------")]
+    [Space]
+    [Tooltip ("Hook cache prefab.")]
+    public GameObject hookCacheObj;
+    [Tooltip ("Hook prefab.")] [SerializeField]
+    private GameObject hookPrefab;
+    [Tooltip ("Player angulas speed.")] [SerializeField]
     private float plAngularVel;
-
-    [Tooltip ("Caixa de texto com a quantidade de pontos do player.")] [SerializeField]
-    private TextMeshProUGUI pointsTxtBox;
-
-    [Tooltip ("Caixa de texto com a quantidade maxima de pontos já obtidas em uma rodada.")] [SerializeField]
-    private TextMeshProUGUI maxPointsTxtBox;
-
-    [Tooltip ("Objeto da caixa de texto dos combos.")] [SerializeField]
-    private Transform comboTxtObj;
 
     [Header ("Debug Data----------------------------")]
     [Space]
-
-    [Tooltip ("Quantidade de pontos da rodada atual.")]
+    [Tooltip ("Current scans quantity.")]
     public int roundPoints;
-
-    [Tooltip ("Quantidade de pontos do combo.")]
+    [Tooltip ("Current combo quantity.")]
     public int comboPoints;
-
-    [Tooltip ("Quantidade de protetores de combo.")]
-    public int comboProtector;
-
-    [Tooltip ("Tamanho padrão da fonte do texto com a pontuação,")] [SerializeField]
-    private float defaultFontSize;
-
-    [Tooltip ("Informa se o player está ou não conectado em um gancho.")]
+    [Tooltip ("Quantity of combo shields.")]
+    public int comboShields;
+    [Tooltip ("Default scans font size.")] [SerializeField]
+    private float defaultScansFontSize;
+    [Tooltip ("Define if player is on hook.")]
     public bool plOnHook;
 
     #region Variaveis Privadas
-        private Rigidbody2D plBody; //Componente que aplica física ao player.
-        private LineRenderer hookLine; //Componente que fara a linha entre os ganchos e o player.
-        private TrailRenderer trailComponent; //Cmponente que faz a trilha do player.
-        private GameObject hookObj; //Objeto do gancho.
-        private float cameraXAxis; //Valor do eixo X da camêra.
+        private Rigidbody2D plBody; //Component that apply physics in player object.
+        private LineRenderer hookLine; //Component that makes the lines between player and hook.
+        private TrailRenderer trailComponent; //Component that make player trail.
+        private GameObject hookObj; //Hook object.
+        private float cameraXAxis; //Camera X-Axis value.
     #endregion
 
     void Awake()
@@ -60,8 +45,8 @@ public class PlayerScript : MonoBehaviour
         plBody = GetComponent<Rigidbody2D>();
         hookLine = GetComponent<LineRenderer>();
         trailComponent = GetComponent<TrailRenderer>();
-        defaultFontSize = pointsTxtBox.fontSize;
-        maxPointsTxtBox.text = _GameManager.maxPoints.ToString();
+
+        defaultScansFontSize = _GameManager.defaultCurrentScansTxtBox.fontSize;
     }
 
     void FixedUpdate()
@@ -69,9 +54,9 @@ public class PlayerScript : MonoBehaviour
         cameraObj.transform.position = new Vector3(cameraXAxis + 4, 0, -10);
         hookLine.SetPosition(0, plBody.position);
 
-        if (pointsTxtBox.fontSize > defaultFontSize)
+        if (_GameManager.defaultCurrentScansTxtBox.fontSize > defaultScansFontSize)
         {
-            pointsTxtBox.fontSize -= 50 * Time.deltaTime;
+            _GameManager.defaultCurrentScansTxtBox.fontSize -= 50 * Time.deltaTime;
         }
 
         if (plOnHook == true)
@@ -91,12 +76,12 @@ public class PlayerScript : MonoBehaviour
     public void AddPoint()
     {
         roundPoints++;
-        pointsTxtBox.text = roundPoints.ToString();
-        pointsTxtBox.fontSize = defaultFontSize + (defaultFontSize/4);
+        _GameManager.defaultCurrentScansTxtBox.text = roundPoints.ToString();
+        _GameManager.defaultCurrentScansTxtBox.fontSize = defaultScansFontSize + (defaultScansFontSize/4);
 
-        if (_GameManager.maxPoints < roundPoints)
+        if (_GameManager.maxScans < roundPoints)
         {
-            _GameManager.maxPoints = roundPoints;
+            _GameManager.maxScans = roundPoints;
         }
     }
 
@@ -105,7 +90,7 @@ public class PlayerScript : MonoBehaviour
         NewHook();
         AddPoint();
 
-        if (comboProtector >= 0)
+        if (comboShields >= 0)
         {
             comboPoints++;
             if (comboPoints > 2)
@@ -114,7 +99,7 @@ public class PlayerScript : MonoBehaviour
             }
         }
 
-        comboProtector = 1;
+        comboShields = 1;
         hookCacheObj.transform.position = plBody.position;
 
         plAngularVel = Mathf.Lerp(150,500,Mathf.InverseLerp(0,100,roundPoints));
@@ -151,7 +136,7 @@ public class PlayerScript : MonoBehaviour
 
     void NewComboText()
     {
-        Instantiate(comboTxtObj, plBody.position, Quaternion.identity);
+        Instantiate(_GameManager.comboTxtPrefab, plBody.position, Quaternion.identity);
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -164,8 +149,8 @@ public class PlayerScript : MonoBehaviour
 
         if (collider.gameObject.CompareTag("HookCache"))
         {
-            comboProtector--;
-            if (comboProtector < 0)
+            comboShields--;
+            if (comboShields < 0)
             {
                 comboPoints = 0;
             }
