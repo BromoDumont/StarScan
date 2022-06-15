@@ -10,12 +10,25 @@ public class GameManager : MonoBehaviour
 {
     [Tooltip ("Player Script.")] [SerializeField] 
     private PlayerScript _PlayerScript;
+    [Tooltip ("Camera object.")] [SerializeField]
+    private GameObject cameraObj;
     [Tooltip ("Continue button.")]
     public Button deathContinueBtn;
     [Tooltip ("Define if this round is a continuation of the previous one")]
     public bool isContinuation;
     [Tooltip ("Combo text prefab.")] [SerializeField]
     public Transform comboTxtPrefab;
+
+    [Header ("--------------------------------------")]
+    [Space]
+    [Tooltip ("Hook prefab.")] [SerializeField]
+    private GameObject hookPrefab;
+    [Tooltip ("Current scans quantity.")]
+    public int roundScans;
+    [Tooltip ("Default scans font size.")] [SerializeField]
+    private float defaultScansFontSize;
+    [Tooltip ("Current combo quantity.")]
+    public int comboPoints;
 
     [Header ("--------------------------------------")]
     [Space]
@@ -69,7 +82,7 @@ public class GameManager : MonoBehaviour
 
         if (isContinuation == true)
         {
-            _PlayerScript.roundPoints = lastRoundScans - 1;
+            roundScans = lastRoundScans - 1;
             isContinuation = false;
             deathContinueBtn.interactable = false;
         }
@@ -78,15 +91,60 @@ public class GameManager : MonoBehaviour
             deathContinueBtn.interactable = true;
         }
 
+        defaultScansFontSize = defaultCurrentScansTxtBox.fontSize;
         defaultMaxScansTxtBox.text = maxScans.ToString();
-    }   
+    }
+
+    void FixedUpdate()
+    {
+        cameraObj.transform.position = new Vector3(_PlayerScript.cameraXAxis + 4, 0, -10);
+
+        if (defaultCurrentScansTxtBox.fontSize > defaultScansFontSize)
+        {
+            defaultCurrentScansTxtBox.fontSize -= 50 * Time.deltaTime;
+        }
+    }
+
+    public void AddPoint()
+    {
+        roundScans++;
+        defaultCurrentScansTxtBox.text = roundScans.ToString();
+        defaultCurrentScansTxtBox.fontSize = defaultScansFontSize + (defaultScansFontSize/4);
+
+        if (maxScans < roundScans)
+        {
+            maxScans = roundScans;
+        }
+    }
+
+    public void NewHook()
+    {
+        Instantiate(hookPrefab, new Vector2(_PlayerScript.hookObj.transform.position.x + 16.5f, Random.Range(-17, 15)), Quaternion.identity);
+    }
+
+    public void ComboVerify()
+    {
+        if (_PlayerScript.comboShields >= 0)
+        {
+            comboPoints++;
+            if (comboPoints > 2)
+            {
+                NewComboText();
+            }
+        }
+    }
+
+    void NewComboText()
+    {
+        Instantiate(comboTxtPrefab, _PlayerScript.plBody.position, Quaternion.identity);
+    }
 
     public void Pause()
     {
         if (Time.timeScale > 0)
         {
             Time.timeScale = 0;
-            pauseScansTxtBox.text = _PlayerScript.roundPoints.ToString();
+            pauseScansTxtBox.text = roundScans.ToString();
             pauseMaxScansTxtBox.text = maxScans.ToString();
             pauseUIObj.SetActive(true);
             defaultUIObj.SetActive(false);
@@ -105,7 +163,7 @@ public class GameManager : MonoBehaviour
         defaultUIObj.SetActive(false);
 
         deathMaxScansTxt.text = maxScans.ToString();
-        deathRoundScansTxt.text = _PlayerScript.roundPoints.ToString();
+        deathRoundScansTxt.text = roundScans.ToString();
 
         _PlayerScript.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
         _PlayerScript.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0;
@@ -113,7 +171,7 @@ public class GameManager : MonoBehaviour
 
     public void GameRestart(bool isContinuation)
     {
-        lastRoundScans = _PlayerScript.roundPoints;
+        lastRoundScans = roundScans;
         this.isContinuation = isContinuation;
         SaveData();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -126,15 +184,16 @@ public class GameManager : MonoBehaviour
 
     public void SaveData()
     {
-        SaveSystem.SavePointsData(this);
+        SaveSystem.SaveScansData(this);
     }
     
     public void LoadData()
     {
         if (File.Exists(Application.persistentDataPath + "/StarScan.wts"))
         {
-            PointsData data = SaveSystem.LoadPointsData();
+            ScansData data = SaveSystem.LoadScansData();
             maxScans = data._maxScans;
+            maxCombo = data._maxCombo;
             lastRoundScans = data._lastRoundScans;
             isContinuation = data._isContinuation;
         }

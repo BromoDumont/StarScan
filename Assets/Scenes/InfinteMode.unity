@@ -288,20 +288,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _PlayerScript: {fileID: 1681762505}
+  cameraObj: {fileID: 519420028}
   deathContinueBtn: {fileID: 641020321}
   isContinuation: 0
   comboTxtPrefab: {fileID: 5956421492051778835, guid: 395a97368f029214d94b8a0fa7b0a19c, type: 3}
+  hookPrefab: {fileID: 7485663618093400738, guid: 96d162334b38be04f80ad63c96a2611f, type: 3}
+  roundScans: 0
+  defaultScansFontSize: 0
+  comboPoints: 0
   defaultUIObj: {fileID: 190550225}
   pauseUIObj: {fileID: 1376386535}
   deathUIObj: {fileID: 176227859}
   defaultMaxScansTxtBox: {fileID: 13828580}
   defaultCurrentScansTxtBox: {fileID: 592139117}
   defaultMaxComboTxtBox: {fileID: 1632112191}
-  pauseScansTxtBox: {fileID: 0}
-  pauseMaxScansTxtBox: {fileID: 0}
-  pauseMaxComboTxtBox: {fileID: 0}
-  deathRoundScansTxt: {fileID: 0}
-  deathMaxScansTxt: {fileID: 0}
+  pauseScansTxtBox: {fileID: 101540630}
+  pauseMaxScansTxtBox: {fileID: 1771083325}
+  pauseMaxComboTxtBox: {fileID: 460259710}
+  deathRoundScansTxt: {fileID: 120752617}
+  deathMaxScansTxt: {fileID: 350870229}
   deathRunMaxComboTxtBox: {fileID: 0}
   maxScans: 0
   maxCombo: 0
@@ -3998,15 +4003,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _GameManager: {fileID: 14395534}
-  cameraObj: {fileID: 519420028}
   hookCacheObj: {fileID: 1264759242}
-  hookPrefab: {fileID: 7485663618093400738, guid: 96d162334b38be04f80ad63c96a2611f, type: 3}
   plAngularVel: 150
-  roundPoints: 0
-  comboPoints: 0
   comboShields: 0
-  defaultScansFontSize: 0
   plOnHook: 0
+  plBody: {fileID: 0}
+  hookObj: {fileID: 0}
+  cameraXAxis: 0
 --- !u!212 &1681762506
 SpriteRenderer:
   m_ObjectHideFlags: 0

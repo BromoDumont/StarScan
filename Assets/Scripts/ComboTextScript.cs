@@ -17,7 +17,7 @@ public class ComboTextScript : MonoBehaviour
     void Start()
     {
         playerObj = GameObject.Find("Player");
-        comboTxt.text = playerObj.GetComponent<PlayerScript>().comboPoints.ToString();
+        comboTxt.text = GameObject.Find("GameManager").GetComponent<GameManager>().comboPoints.ToString();
     }
 
     void FixedUpdate()
