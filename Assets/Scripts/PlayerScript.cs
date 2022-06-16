@@ -85,10 +85,10 @@ public class PlayerScript : MonoBehaviour
         plBody.angularVelocity = 0;
         plBody.rotation = 0;
 
+        plOnHook = false;
+
         HookScript _HookScript = hookObj.GetComponent<HookScript>();
         StartCoroutine(_HookScript.AutoDestroy());
-
-        plOnHook = false;
     }
 
     void OnTriggerEnter2D(Collider2D collider)

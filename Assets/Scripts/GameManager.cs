@@ -63,8 +63,10 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI deathRoundScansTxt;
     [Tooltip ("Max scan value in death hud")] [SerializeField]
     private TextMeshProUGUI deathMaxScansTxt;
-    [Tooltip ("Max runs scans combo value in death hud")]
-    public TextMeshProUGUI deathRunMaxComboTxtBox;
+    [Tooltip ("Max scans combo value in death hud")]
+    public TextMeshProUGUI deathMaxComboTxtBox;
+    [Tooltip ("Max scans combo in round value in death hud")]
+    public TextMeshProUGUI deathMaxRoundComboTxtBox;
 
     [Header ("--------------------------------------")]
     [Space]
@@ -72,8 +74,12 @@ public class GameManager : MonoBehaviour
     public int maxScans;
     [Tooltip ("Max scan combo")]
     public int maxCombo;
+    [Tooltip ("Max Round Combo")]
+    public int maxRoundCombo;
     [Tooltip ("Last round scans.")]
     public int lastRoundScans;
+    [Tooltip ("Last max round combo")]
+    public int lastMaxRoundCombo;
 
     void Awake()
     {
@@ -83,6 +89,7 @@ public class GameManager : MonoBehaviour
         if (isContinuation == true)
         {
             roundScans = lastRoundScans - 1;
+            maxRoundCombo = lastMaxRoundCombo;
             isContinuation = false;
             deathContinueBtn.interactable = false;
         }
@@ -93,6 +100,7 @@ public class GameManager : MonoBehaviour
 
         defaultScansFontSize = defaultCurrentScansTxtBox.fontSize;
         defaultMaxScansTxtBox.text = maxScans.ToString();
+        defaultMaxComboTxtBox.text = maxCombo.ToString();
     }
 
     void FixedUpdate()
@@ -114,6 +122,7 @@ public class GameManager : MonoBehaviour
         if (maxScans < roundScans)
         {
             maxScans = roundScans;
+            defaultMaxScansTxtBox.text = maxScans.ToString();
         }
     }
 
@@ -129,14 +138,21 @@ public class GameManager : MonoBehaviour
             comboPoints++;
             if (comboPoints > 2)
             {
-                NewComboText();
+                Instantiate(comboTxtPrefab, _PlayerScript.plBody.position, Quaternion.identity);
+
+                if (comboPoints > maxCombo)
+                {
+                    maxCombo = comboPoints;
+                    defaultMaxComboTxtBox.text = maxCombo.ToString();
+                }
+
+                if (comboPoints > maxRoundCombo)
+                {
+                    maxRoundCombo = comboPoints;
+                    deathMaxRoundComboTxtBox.text = maxRoundCombo.ToString();
+                }
             }
         }
-    }
-
-    void NewComboText()
-    {
-        Instantiate(comboTxtPrefab, _PlayerScript.plBody.position, Quaternion.identity);
     }
 
     public void Pause()
@@ -146,6 +162,8 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 0;
             pauseScansTxtBox.text = roundScans.ToString();
             pauseMaxScansTxtBox.text = maxScans.ToString();
+            pauseMaxComboTxtBox.text = maxCombo.ToString();
+
             pauseUIObj.SetActive(true);
             defaultUIObj.SetActive(false);
         }
@@ -159,11 +177,12 @@ public class GameManager : MonoBehaviour
 
     public void DeathScreen()
     {
-        deathUIObj.SetActive(true);
-        defaultUIObj.SetActive(false);
-
         deathMaxScansTxt.text = maxScans.ToString();
         deathRoundScansTxt.text = roundScans.ToString();
+        deathMaxComboTxtBox.text = maxCombo.ToString();
+
+        deathUIObj.SetActive(true);
+        defaultUIObj.SetActive(false);
 
         _PlayerScript.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
         _PlayerScript.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0;
@@ -172,6 +191,7 @@ public class GameManager : MonoBehaviour
     public void GameRestart(bool isContinuation)
     {
         lastRoundScans = roundScans;
+        lastMaxRoundCombo = maxRoundCombo;
         this.isContinuation = isContinuation;
         SaveData();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
